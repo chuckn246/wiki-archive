@@ -5,7 +5,7 @@ nav_order: 1
 nav_exclude: false
 ---
 
-# Chuck Nemeth's Legacy Technical Wiki
+# Chuck's Legacy Technical Wiki
 
 {: .note-title }
 > **Archived Documentation**
