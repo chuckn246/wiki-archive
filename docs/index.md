@@ -5,15 +5,15 @@ nav_order: 1
 nav_exclude: false
 ---
 
-# Chuck Nemeth's Technical Wiki
-
-A collection of my technical notes, guides, and experiments.
-
-Thanks for visiting!
+# Chuck Nemeth's Legacy Technical Wiki
 
 > **Archived Documentation**
 >
 > This wiki is no longer actively maintained. Some information may be outdated, but the content is preserved for historical reference and for anyone who still finds it useful.
+
+A collection of my technical notes, guides, and experiments.
+
+Thanks for visiting!
 
 ## Home Lab
 
