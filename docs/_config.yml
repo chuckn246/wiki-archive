@@ -23,24 +23,27 @@ defaults:
       path: ""
       type: pages
     values:
-      layout: default
+      layout: archive
       nav_exclude: true
 
 callouts:
+  archive:
+    title: Archived Documentation
+    color: yellow
+  caution:
+    title: Caution
+    color: red
+  important:
+    title: Important
+    color: blue
   note:
     title: Note
     color: purple
   tip:
     title: Tip
     color: green
-  important:
-    title: Important
-    color: blue
   warning:
     title: Warning
     color: yellow
-  caution:
-    title: Caution
-    color: red
 
 # vim: ft=yaml ts=2 sts=-1 sw=2 et
