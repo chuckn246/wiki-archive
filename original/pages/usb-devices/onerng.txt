@@ -1,0 +1,501 @@
+======OneRNG Hardware Random Number Generator======
+
+I’ve wanted a hardware random number generator since I read about them in a tutorial for setting up a GnuPG Smart Card but the one they used wasn’t being manufactured anymore. Enter the OneRNG.
+
+I started my search for another one and came across the [[http://onerng.info/|OneRNG]]. At the time of purchase, I paid ($40) and waited for it to arrive. I ended up waiting a couple of weeks since it shipped from China.
+
+Once it arrived I installed the software and tested it out.
+
+----
+
+=====Inspecting the OneRNG=====
+
+One of the ‘features’ of this device is that it’s completely open. Open meaning open source software and hardware. You can physically inspect every aspect. They have images and schematics you can compare your device with to ensure that your device hasn’t been tampered with in transit. I looked mine over and took some pictures.
+
+{{ usb-device:onerng:onerng-top.jpg?direct&600 |OneRNG Top }}
+
+Take the ‘tin foil hat’ off and it reveals the components:
+
+{{ usb-device:onerng:onerng-top-lidoff.jpg?direct&600 |OneRNG Top Lid Off }}
+
+The back of the device is pretty boring, but you can see the traces.
+{{ usb-device:onerng:onerng-back.jpg?direct&600 |OneRNG Back }}
+
+----
+
+=====Setting up the OneRNG=====
+
+It doesn’t take much to get going with the OneRNG. A few packages and you’re ready to create oodles of random data.
+
+====Installing software====
+
+  * In order for this thing to work properly, we need to install some packages on our host system:<code>
+[user@mainpc:~]$ sudo apt install at openssl python-gnupg rng-tools</code>
+
+  * Finally, download the host software from their site, verify, then install it:<code>
+[user@mainpc:Downloads]$ wget -O onerng.deb 'https://github.com/OneRNG/onerng.github.io/blob/master/sw/onerng_3.6-1_all.deb?raw=true'
+
+[user@mainpc:Downloads]$ sha256sum onerng.deb
+a9ccf7b04ee317dbfc91518542301e2d60ebe205d38e80563f29aac7cd845ccb onerng.deb
+
+[user@mainpc:Downloads]$ sudo apt install ./onerng.deb
+</code>
+
+You can (and should) verify what I typed here at the Official Site:
+http://onerng.info/onerng/
+
+----
+
+====rng-tools service====
+I noticed that rng-tools was failing to start due to not finding a hardware RNG device to use.
+  * Check the status of the service: <code>
+[user@mainpc:~]$ systemctl status rng-tools
+● rng-tools.service
+   Loaded: loaded (/etc/init.d/rng-tools; generated)
+   Active: failed (Result: exit-code) since Tue 2020-06-16 13:31:13 EDT; 7s ago
+     Docs: man:systemd-sysv-generator(8)
+  Process: 29738 ExecStart=/etc/init.d/rng-tools start (code=exited, status=1/FAILURE)
+
+Jun 16 13:31:13 mainpc systemd[1]: Starting rng-tools.service...
+Jun 16 13:31:13 mainpc rng-tools[29738]: Starting Hardware RNG entropy gatherer daemon: (Hardware RNG dev>
+Jun 16 13:31:13 mainpc rng-tools[29738]: /etc/init.d/rng-tools: Cannot find a hardware RNG device to use.
+Jun 16 13:31:13 mainpc systemd[1]: rng-tools.service: Control process exited, code=exited, status=1/FAILU>
+Jun 16 13:31:13 mainpc systemd[1]: rng-tools.service: Failed with result 'exit-code'.
+Jun 16 13:31:13 mainpc systemd[1]: Failed to start rng-tools.service.
+</code>
+
+===Fixing it===
+I was able to fix it by editing ''%%/etc/default/rng-tools%%'' and pointing it to ''%%/dev/ttyACM0%%''.
+
+  * Edit the file:<code>
+[user@mainpc:~]$ sudoedit /etc/default/rng-tools
+</code>
+  * Uncomment and edit:<code>
+HRNGDEVICE=/dev/ttyACM0
+</code>
+  * Start the service:<code>
+[user@mainpc:~]$ sudo systemctl start rng-tools.service
+</code>
+  * Check the status:<code>
+[user@mainpc:~]$ systemctl status rng-tools
+● rng-tools.service
+   Loaded: loaded (/etc/init.d/rng-tools; generated)
+   Active: active (running) since Tue 2020-06-16 13:35:07 EDT; 3s ago
+     Docs: man:systemd-sysv-generator(8)
+  Process: 17170 ExecStart=/etc/init.d/rng-tools start (code=exited, status=0/SUCCESS)
+    Tasks: 4 (limit: 4915)
+   Memory: 708.0K
+   CGroup: /system.slice/rng-tools.service
+           └─17172 /usr/sbin/rngd -r /dev/ttyACM0
+
+Jun 16 13:35:07 mainpc systemd[1]: Starting rng-tools.service...
+Jun 16 13:35:07 mainpc rng-tools[17170]: Starting Hardware RNG entropy gatherer daemon: rngd.
+Jun 16 13:35:07 mainpc systemd[1]: Started rng-tools.service.
+Jun 16 13:35:07 mainpc rngd[17172]: rngd 2-unofficial-mt.14 starting up...
+Jun 16 13:35:07 mainpc rngd[17172]: entropy feed to the kernel ready
+</code>
+
+----
+
+=====System Info=====
+
+Here’s the output of a few commands to show what the output is whenever the device is installed.
+Package
+
+Let’s check to make sure the host software was installed properly.
+
+The two i‘s //(ii)// at the beginning of the output stands for:
+
+  * status = installed
+  * error = none
+
+<code>
+[user@mainpc:~]$ sudo dpkg --list onerng | tail --lines 1
+ii onerng 3.6-1 all Driver for the OneRNG open source hardware entropy generator
+</code>
+
+----
+
+===dmesg===
+
+Now we can check to see if the system recognizes it and what tty it’s assigned to.
+
+<code>
+[user@mainpc:~]$ sudo dmesg | grep usb
+ 
+[    1.887348] usb 2-8: new full-speed USB device number 5 using xhci_hcd
+[    2.030122] usb 2-8: New USB device found, idVendor=1d50, idProduct=6086
+[    2.030124] usb 2-8: New USB device strings: Mfr=1, Product=3,
+SerialNumber=3
+[    2.030125] usb 2-8: Product: 00
+[    2.030126] usb 2-8: Manufacturer: Moonbase Otago
+http://www.moonbaseotago.com​/random
+[    2.030126] usb 2-8: SerialNumber: 00
+
+[user@mainpc:~]$ sudo dmesg | grep ttyACM
+[   20.423233] cdc_acm 2-2:1.0: ttyACM0: USB ACM device
+[  105.404973] cdc_acm 2-1:1.0: ttyACM0: USB ACM device
+</code>
+
+----
+
+===lsmod===
+
+Checking that the system modules are in use
+<code>
+[user@mainpc:~]$ lsmod | grep cdc_acm
+cdc_acm                28672  2
+usbcore               253952  7 usbhid,ehci_hcd,cdc_acm,usblp,xhci_pci,xhci_hcd,ehci_pci
+</code>
+
+----
+
+===lsusb===
+
+Gather all the info about the device plugged in to the USB port.
+
+<code>
+[user@mainpc:~]$ sudo lsusb -v
+ 
+Bus 002 Device 005: ID 1d50:6086 OpenMoko, Inc.
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               2.00
+  bDeviceClass            2 Communications
+  bDeviceSubClass         0
+  bDeviceProtocol         0
+  bMaxPacketSize0        32
+  idVendor           0x1d50 OpenMoko, Inc.
+  idProduct          0x6086
+  bcdDevice            0.09
+  iManufacturer           1 Moonbase Otago http://www.moonbaseotago.com​/random
+  iProduct                3 00
+  iSerial                 3 00
+  bNumConfigurations      1
+  Configuration Descriptor:
+    bLength                 9
+    bDescriptorType         2
+    wTotalLength           67
+    bNumInterfaces          2
+    bConfigurationValue     1
+    iConfiguration          0
+    bmAttributes         0x80
+      (Bus Powered)
+    MaxPower              200mA
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       0
+      bNumEndpoints           1
+      bInterfaceClass         2 Communications
+      bInterfaceSubClass      2 Abstract (modem)
+      bInterfaceProtocol      1 AT-commands (v.25ter)
+      iInterface              0
+      CDC Header:
+        bcdCDC               1.10
+      CDC ACM:
+        bmCapabilities       0x06
+          sends break
+          line coding and serial state
+      CDC Union:
+        bMasterInterface        0
+        bSlaveInterface         1
+      CDC Call Management:
+        bmCapabilities       0x00
+        bDataInterface          1
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x82  EP 2 IN
+        bmAttributes            3
+          Transfer Type            Interrupt
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0020  1x 32 bytes
+        bInterval              64
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        1
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass        10 CDC Data
+      bInterfaceSubClass      0 Unused
+      bInterfaceProtocol      0
+      iInterface              4 Random
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x85  EP 5 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0040  1x 64 bytes
+        bInterval               1
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x05  EP 5 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0040  1x 64 bytes
+        bInterval               1
+Device Status:     0x0000
+  (Bus Powered)
+</code>
+
+----
+
+===Process Status===
+
+Confirm the rngd service is running.
+
+<code>
+[user@mainpc:~]$ ps aux | grep rngd
+root     30744  0.0  0.0  27036   808 ?        SNLl 10:34   0:01 rngd -f --rng-entropy=.93750 -r /dev/stdin
+root     32076  0.0  0.0  92572   108 ?        SLsl 10:34   0:01 /usr/sbin/rngd -r /dev/ttyACM0
+
+[user@mainpc:~]$ pgrep -a rngd 
+30744 rngd -f --rng-entropy=.93750 -r /dev/stdin
+32076 /usr/sbin/rngd -r /dev/ttyACM0
+
+
+The output of -r /dev/stdin is indicative that you are using openssl for extra whitening (the default). It can be changed in /etc/onerng.conf.
+</code>
+
+----
+
+===ttyACM0===
+
+Info about the tty device
+<code>
+[user@mainpc:~]$ stat /dev/ttyACM0 
+  File: /dev/ttyACM0
+  Size: 0         	Blocks: 0          IO Block: 4096   character special file
+Device: 6h/6d	Inode: 35324       Links: 1     Device type: a6,0
+Access: (0600/crw-------)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2018-09-23 12:10:35.523596786 -0400
+Modify: 2018-09-23 11:39:21.523596786 -0400
+Change: 2018-09-23 11:39:16.523596786 -0400
+ Birth: -
+</code>
+
+----
+
+===/var/log/messages===
+
+Check the log files for information
+
+<code>
+[user@mainpc:log]$ sudo grep OneRNG /var/log/messages
+Aug 30 17:33:45 mainpc OneRNG: firmware verification passed OK - version=3
+
+[user@mainpc:log]$ sudo grep ttyACM /var/log/messages
+Aug 30 17:31:43 gaming kernel: [ 5810.258554] cdc_acm 2-8:1.0: ttyACM0: USB ACM device
+</code>
+
+----
+
+=====Testing the OneRNG=====
+
+We can run it through a series of tests to verify it’s working.
+
+There is a visual indication to verify it’s operation as well. When you use it, for instance by running cat /dev/random > /dev/null, the led light will dim on the device. Once you stop it by pressing <Ctrl>+C, it will go back to full brightness.
+
+----
+====Create a 10M file====
+
+We’ll use dd to create a 10M file of random data. I’ll time it and see how long it takes for each. I ran 3 instances:
+
+  * **/dev/random** - OneRNG used through /dev/random
+  * **/dev/ttyACM0** - Using the device directly
+  * **/dev/urandom** - Not using the OneRNG at all
+
+
+===Using /dev/random===
+<code>
+[user@mainpc:~]$ time dd if=/dev/random of=random.img iflag=fullblock bs=1M count=10 status=progress
+10+0 records in
+10+0 records out
+10485760 bytes (10 MB, 10 MiB) copied, 595.879 s, 17.6 kB/s
+
+real 9m55.880s
+user 0m0.028s
+sys 0m4.308s
+</code>
+===Using /dev/ttyACM0===
+<code>
+[user@mainpc:~]$ time sudo dd if=/dev/ttyACM0 of=tty.img iflag=fullblock bs=1M count=10 status=progress
+10+0 records in
+10+0 records out
+10485760 bytes (10 MB, 10 MiB) copied, 182.066 s, 57.6 kB/s
+
+real	3m2.079s
+user	0m0.092s
+sys	0m1.016s
+</code>
+
+===Using /dev/urandom===
+<code>
+[user@mainpc:~]$ time dd if=/dev/urandom of=urandom.img iflag=fullblock bs=1M count=10 status=progress
+10+0 records in
+10+0 records out
+10485760 bytes (10 MB, 10 MiB) copied, 0.05296 s, 198 MB/s
+
+real 0m0.056s
+user 0m0.000s
+sys 0m0.056s
+</code>
+
+----
+
+===Results===
+The results show that using ''%%/dev/ttyACM0%%'' is roughly 3x faster than using ''%%/dev/random%%'' while both are much slower than ''%%/dev/urandom%%''.
+
+^ Stat ^ /dev/random ^ /dev/ttyACM0 ^ /dev/urandom ^
+^ real | 9m55.880s   | 3m2.079s     | 0m0.056s     |
+^ user | 0m0.028s    | 0m0.092s     | 0m0.000s     |
+^ sys  | 0m4.308s    | 0m1.016s     | 0m0.056s     |
+
+----
+
+====entropy_avail====
+You can check the amount of entropy available by reading the file ''%%/proc/sys/kernel/random/entropy_avail%%''. 
+
+<WRAP announcement green>
+Here's a oneliner I wrote to monitor it from another terminal while I ran the above tests:
+<code>
+while true; do cat /proc/sys/kernel/random/entropy_avail; sleep 1; done
+</code>
+</WRAP>
+
+I noticed that while idle and with the OneRNG plugged in, the value stayed above 2500 and would climb well past 3000 if left alone for a while. The max value can be found in ''%%/proc/sys/kernel/random/poolsize%%'' (where mine is set at 4096).
+
+  * When running from ''%%/dev/random%%'', the **entropy_available** quickly depletes until the task is finished.
+    * When the OneRNG **is** plugged in, it instantly regenerates to above 2000 once the task is finished.
+    * When the OneRNG ** is not** plugged in, it slowly starts rising once the task is finished.
+  * When running from ''%%/dev/ttyACM0%%'', the **entropy_available** seems to stay the same while creating the 10M file.
+  * When running from ''%%/dev/urandom%%'', the **entropy_available** seems to stay the same while creating the 10M file.
+
+----
+====ent====
+
+I passed the outputted files through ent - a pseudorandom number sequence test.
+<code>
+[user@mainpc:~]$ ent random.img 
+Entropy = 7.999981 bits per byte.
+
+Optimum compression would reduce the size
+of this 10485760 byte file by 0 percent.
+
+Chi square distribution for 10485760 samples is 280.27, and randomly
+would exceed this value 13.28 percent of the times.
+
+Arithmetic mean value of data bytes is 127.4895 (127.5 = random).
+Monte Carlo value for Pi is 3.142349679 (error 0.02 percent).
+Serial correlation coefficient is 0.000131 (totally uncorrelated = 0.0).
+
+[user@mainpc:~]$ ent tty.img 
+Entropy = 7.999983 bits per byte.
+
+Optimum compression would reduce the size
+of this 10485760 byte file by 0 percent.
+
+Chi square distribution for 10485760 samples is 249.34, and randomly
+would exceed this value 58.83 percent of the times.
+
+Arithmetic mean value of data bytes is 127.4574 (127.5 = random).
+Monte Carlo value for Pi is 3.142624337 (error 0.03 percent).
+Serial correlation coefficient is 0.000404 (totally uncorrelated = 0.0).
+
+[user@mainpc:~]$ ent urandom.img 
+Entropy = 7.999983 bits per byte.
+
+Optimum compression would reduce the size
+of this 10485760 byte file by 0 percent.
+
+Chi square distribution for 10485760 samples is 249.17, and randomly
+would exceed this value 59.11 percent of the times.
+
+Arithmetic mean value of data bytes is 127.4838 (127.5 = random).
+Monte Carlo value for Pi is 3.144704874 (error 0.10 percent).
+Serial correlation coefficient is 0.000213 (totally uncorrelated = 0.0).
+</code>
+
+----
+
+====rngtest====
+
+Lastly, I ran the output through rngtest for 1000 passes and copied the output.
+
+<code>
+[user@mainpc:~]$ rngtest -c 1000 </dev/random
+rngtest 2-unofficial-mt.14
+Copyright (c) 2004 by Henrique de Moraes Holschuh
+This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 1000
+rngtest: FIPS 140-2 failures: 0
+rngtest: FIPS 140-2(2001-10-10) Monobit: 0
+rngtest: FIPS 140-2(2001-10-10) Poker: 0
+rngtest: FIPS 140-2(2001-10-10) Runs: 0
+rngtest: FIPS 140-2(2001-10-10) Long run: 0
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+rngtest: input channel speed: (min=68.024; avg=137.971; max=26609.332)Kibits/s
+rngtest: FIPS tests speed: (min=19.868; avg=74.944; max=105.378)Mibits/s
+rngtest: Program run time: 141815448 microseconds
+
+[user@mainpc:~]$ rngtest -c 1000 </dev/urandom
+rngtest 2-unofficial-mt.14
+Copyright (c) 2004 by Henrique de Moraes Holschuh
+This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 1000
+rngtest: FIPS 140-2 failures: 0
+rngtest: FIPS 140-2(2001-10-10) Monobit: 0
+rngtest: FIPS 140-2(2001-10-10) Poker: 0
+rngtest: FIPS 140-2(2001-10-10) Runs: 0
+rngtest: FIPS 140-2(2001-10-10) Long run: 0
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+rngtest: input channel speed: (min=866.977; avg=1898.615; max=2119.276)Mibits/s
+rngtest: FIPS tests speed: (min=37.108; avg=102.402; max=106.556)Mibits/s
+rngtest: Program run time: 196428 microseconds
+</code>
+
+----
+=====Configuration and Log Files=====
+
+There are a couple of files that could possibly be of interest to you:
+
+  * **/etc/default/rng-tools** - settings for rng-tools
+  * **/etc/onerng.conf** - configuration file for the device itself
+  * **/sbin/onerng.sh** - the main script
+  * **/var/log/messages** - where the log messages are sent
+
+----
+
+=====What does all this mean?=====
+
+I don’t know!
+
+Not sure what I will be able to use this for, but it’s pretty nifty to have around.
+
+What do you use yours for?
+
+----
+
+====Helpful Links====
+
+  * http://onerng.info/
+  * http://moonbaseotago.com/onerng/
+  * https://myles.sh/generating-and-distributing-entropy-with-the-onerng-hwrng-usb-in-various-virtualisation-environments/
+  * https://www.chaostreffbern.ch/en/onerng.html

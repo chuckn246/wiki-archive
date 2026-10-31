@@ -1,0 +1,4 @@
+======FreeNAS======
+I'm using FreeNAS as storage for my VM's on [[:linux:distribution:proxmox|Proxmox]] and as storage for my various PCs.
+
+----

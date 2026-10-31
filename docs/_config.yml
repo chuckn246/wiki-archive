@@ -1,0 +1,19 @@
+---
+title: Chuck Nemeth - Legacy Technical Wiki
+description: Archived technical notes and documentation
+theme: jekyll-theme-minimal
+
+markdown: kramdown
+url: "https://legacy.chucknemeth.com"
+baseurl: ""
+
+plugins:
+  - jekyll-relative-links
+  - jekyll-optional-front-matter
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: default

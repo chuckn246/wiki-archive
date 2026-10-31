@@ -1,0 +1,8 @@
+======Linux======
+Linux things.
+
+----
+
+  * [[linux:distribution|Distributions]]
+  * [[linux:ricing|Ricing]]
+  * [[security:passwords|Passwords]]

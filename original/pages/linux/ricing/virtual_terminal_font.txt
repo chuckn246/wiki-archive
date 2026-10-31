@@ -1,0 +1,26 @@
+======Virtual Terminal Font======
+Nothing too exciting yet..
+
+----
+
+  * Change the font & size interactively:<code bash>
+sudo dpkg-reconfigure -plow console-setup
+</code>
+  * Change the font & size manually:<code bash>
+sudoedit /etc/default/console-setup
+</code>
+  * VT font directory is:<code bash>
+/usr/share/consolefonts
+</code>
+  * Show current font. (Run in a tty):<code bash>
+showconsolefont
+</code>
+
+----
+
+=====References=====
+====Fonts====
+  * ''%%man console-setup%%''
+
+====General====
+  * http://blog.startaylor.net/2016/05/30/howto-console/

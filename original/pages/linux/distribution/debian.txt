@@ -1,0 +1,8 @@
+======Debian======
+Debian things.
+
+----
+
+=====Preseeding=====
+  * [[linux:distribution:debian:preseed:debian-9-preseed-uefi-encrypted-lvm|Debian 9 Preseed with Encrypted UEFI]]
+  * [[linux:distribution:debian:preseed:debian-10-preseed|Debian 10 Preseed]]

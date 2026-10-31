@@ -1,0 +1,2 @@
+======Lenovo x200======
+  * [[laptop:lenovo-x200:flash-lenovo-x200-libreboot|Flashing Libreboot on a x200]]

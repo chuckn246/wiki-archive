@@ -1,0 +1,274 @@
+======Multiple systemd SSH Agents======
+
+----
+
+<WRAP centeralign box green>
+This works great on my Debian Bullseye / i3wm system.
+I don't see why this wouldn't work on other distros / DEs but YMMV.
+</WRAP>
+=====Create a ssh-agent systemd service template=====
+  * To enable agent creation for **all users**, create ''%%/etc/systemd/user/ssh-agent@.service%%'':
+    - Create directory structure:<code bash>
+sudo mkdir -p /etc/systemd/user/
+</code>
+    - Create the service file:<code ini>
+cat << EOF | sudo tee /etc/systemd/user/ssh-agent@.service
+[Unit]
+Description=SSH authentication agent for %I
+Before=default.target
+
+[Service]
+Type=simple
+Environment=SSH_AUTH_SOCK=%t/%i-agent.socket
+ExecStart=/usr/bin/ssh-agent -D -a %t/%i-agent.socket
+SuccessExitStatus=2
+
+[Install]
+WantedBy=default.target
+
+# vim: ft=dosini ts=2 sts=2 sw=2 sr et
+EOF
+</code>
+  * To enable agent creation for **only you**, create ''%%~/.config/systemd/user/ssh-agent@.service%%'': 
+    - Create directory structure:<code bash>
+mkdir -p ~/.config/systemd/user/
+</code>
+    - Create the service file:<code ini>
+cat << EOF > ~/.config/systemd/user/ssh-agent@.service
+[Unit]
+Description=SSH authentication agent for %I
+Before=default.target
+
+[Service]
+Type=simple
+Environment=SSH_AUTH_SOCK=%t/%i-agent.socket
+ExecStart=/usr/bin/ssh-agent -D -a %t/%i-agent.socket
+SuccessExitStatus=2
+
+[Install]
+WantedBy=default.target
+
+# vim: ft=dosini ts=2 sts=2 sw=2 sr et
+EOF
+</code>
+  * Enabling creation for all users **does NOT** mean that all users can access //your// agent, it just means that they can create //their own// agents!
+
+----
+
+=====Administration=====
+
+====Manage the ssh-agent service====
+  * Start and enable the agent as your regular user (and similar for the other agent(s)):<code bash>
+systemctl --user enable --now ssh-agent@<name>.service
+</code>
+  * Check status of the ssh-agent service:<code bash>
+systemctl --user status ssh-agent@<name>.service
+</code>
+  * Stop the ssh-agent service:<code bash>
+systemctl --user stop ssh-agent@<name>.service
+</code>
+
+===Naming the ssh-agent services===
+  * Whatever name you use for each service will be included in the name of the agent's socket.
+  * For example, if we named one ''%%foo%%'' and another ''%%bar%%'':<code bash>
+systemctl --user enable --now ssh-agent@foo.service
+systemctl --user enable --now ssh-agent@bar.service
+</code>
+  * We would have two new socket files:<code bash>
+"$XDG_RUNTIME_DIR/foo-agent.socket"
+"$XDG_RUNTIME_DIR/bar-agent.socket"
+</code>
+
+----
+=====Set a default ssh-agent=====
+  * Create an environment variable in your preferred startup file (eg ''%%~/.profile%%'', ''%%~/.bash_profile%%'', etc):<code bash>
+socketpath="$XDG_RUNTIME_DIR/<name>-agent.socket"
+if [ -S "$socketpath" ]; then
+  export SSH_AUTH_SOCK="$socketpath"
+fi
+</code>
+
+----
+
+=====Configure SSH to use the agent=====
+  * Use the **IdentityAgent** directive and add the SSH agent socket in your ''%%~/.ssh/config%%'':<code bash>
+ Host myhost
+      ...
+      AddKeysToAgent yes
+      IdentityAgent  "/run/user/%i/<name>-agent.socket"
+      IdentitiesOnly yes
+</code>
+  * **ForwardAgent** can be configured to forward the agent in ''%%~/.ssh/config%%'':<code bash>
+ Host myhost
+      ...
+      AddKeysToAgent yes
+      ForwardAgent   "/run/user/%i/<name>-agent.socket"
+      IdentityAgent  "/run/user/%i/<name>-agent.socket"
+      IdentitiesOnly yes
+</code>
+  * Leaving those unconfigured, the hosts will use whatever ''%%$SSH_AUTH_SOCK%%'' is set to by default.
+
+----
+
+
+
+====Manage the keys in the ssh-agent====
+  * For the default ssh-agent, running only the commands will work:
+    * Add keys to the agent:<code bash>
+ssh-add ~/.ssh/ed_25519
+</code>
+    * List keys in the ssh-agent:<code bash>
+ssh-add -L
+</code>
+    * Clear keys from the agent:<code bash>
+ssh-add -D
+</code>
+  * Prepend the command with the environment variable to access other ssh-agents:
+      * Add keys to the agent:<code bash>
+SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/<name>-agent.socket" ssh-add ~/.ssh/work
+</code>
+      * List keys in the ssh-agent:<code bash>
+SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/<name>-agent.socket" ssh-add -L
+</code>
+      * Clear keys from the agent:<code bash>
+SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/<name>-agent.socket" ssh-add -D
+</code>
+<WRAP centeralign center box smaller blue 90%>
+Configuring **IdentityAgent** and **AddKeysToAgent** in ''%%~/.ssh/config%%'' will automatically add the key to the correct agent when you use it.
+</WRAP>
+
+----
+
+=====Gotchas=====
+  * Debian auto-starts a ssh-agent at login.
+    * Comment or remove the line in ''%%/etc/X11/Xsession.options%%'' to stop it from starting:<code bash>
+sudo sed -i 's/^use-ssh-agent$/# use-ssh-agent/g' /etc/X11/Xsession.options
+</code>
+  * ''%%ssh-add -L%%'' will only list keys in ''%%$SSH_AUTH_SOCK%%''.
+    * Specify the ssh-agent by passing the variable:<code bash>
+SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/<name>-agent.socket" ssh-add -L
+</code>
+  * If using ssh-askpass, add the following to the service file:<code ini>
+# DISPLAY required for ssh-askpass to work
+Environment=DISPLAY=:0
+</code>
+  * ssh-agent exits with code 2 which results in 'failed' state on stop and I found 2 options to remedy this:
+    * Inform systemd that a successful exit status is ''2'':<code ini>
+SuccessExitStatus=2
+</code>
+    * Prefix the ExecStart with a ''%%-%%'' to suppress this behavior:<code ini>
+ExecStart=-/usr/bin/ssh-agent -D -a %t/%i-agent.socket
+</code>
+  * //Currently untested//: Enable linger for users who need the agents to be active while not logged in:<code bash>
+loginctl enable-linger <user>
+</code>
+    * https://manpages.debian.org/bullseye/systemd/loginctl.1.en.html#User_Commands
+
+----
+
+=====Example=====
+After following the steps above, as an example I'll create a "default" agent for my everyday
+ssh keys and a "work" agent for my work ssh keys.
+
+===Create "Default" SSH Agent===
+  * Start and enable the "default" ssh-agent:<code bash>
+systemctl --user enable --now ssh-agent@ssh.service
+</code>
+  * Check status:<code bash>
+systemctl --user status ssh-agent@ssh.service
+</code>
+  * Configure environment for the "default" agent:<code bash>
+cat << EOF >> ~/.profile
+socketpath="$XDG_RUNTIME_DIR/ssh-agent.socket"
+if [ -S "$socketpath" ]; then
+  export SSH_AUTH_SOCK="$socketpath"
+fi
+EOF
+</code>
+  * Source the file to load the variable:<code bash>
+source ~/.profile
+</code>
+  * Add keys to "Default" agent:<code bash>
+ssh-add ~/.ssh/key
+</code>
+  * List keys in "Default" agent:<code bash>
+ssh-add -L
+</code>
+
+
+===Create "Work" Agent===
+  * Start and enable a "work" agent:<code bash>
+systemctl --user enable --now ssh-agent@work.service
+</code>
+  * Check the status:<code bash>
+systemctl --user status ssh-agent@work.service
+</code>
+
+  * Add entries for work machines:<code bash>
+Host work-workmachine-1
+    HostName        XX.XX.XX.XX
+    ForwardAgent    "/run/user/%i/work-agent.socket"
+    ProxyJump       work-jump
+</code>
+  * Add wildcard entry for work machines at **bottom** of ''%%~/.ssh/config%%'':<code bash>
+Host work-*
+    User            username
+    IdentityFile    "%d/.ssh/work"
+    IdentityAgent   "/run/user/%i/work-agent.socket"
+</code>
+  * Add keys to "Work" agent:<code bash>
+SSH_AUTH_SOCK="XDG_RUNTIME_DIR/work-agent.socket" ssh-add ~/.ssh/work
+</code>
+  * List keys in "Work" agent:<code bash>
+SSH_AUTH_SOCK="XDG_RUNTIME_DIR/work-agent.socket" ssh-add -L
+</code>
+<WRAP centeralign center box smaller blue 90%>
+Configuring **IdentityAgent** and **AddKeysToAgent** in ''%%~/.ssh/config%%'' will add the key to the correct agent when you first use it.
+</WRAP>
+
+----
+
+=====Bonus Tip=====
+  * You can create a ''%%ssh%%'' directory in your ''%%$XDG_RUNTIME_DIR%%'' to contain the agent socket files.
+  * This is a good opportunity to make use of systemd's ''%%tmpfiles.d%%'' to create the directory at boot.
+  * Create directory to hold the config files:<code bash>
+mkdir -p ~/.local/share/user-tmpfiles.d
+</code>
+  * Create a configuration file:<code bash>
+cat << EOF > ~/.local/share/user-tmpfiles.d/ssh-config.conf
+d %t/ssh 0700 - - -
+EOF
+</code>
+  * Create the directory:<code bash>
+systemd-tmpfiles --user --create
+</code>
+  * Enable the tmpfiles service so it creates the directory at boot:<code bash>
+systemctl --user enable --now systemd-tmpfiles-setup.service
+</code>
+  * Enable the cleanup timer:<code bash>
+systemctl --user enable --now systemd-tmpfiles-clean.timer 
+</code>
+  * Edit the paths in the files above to add the ''%%ssh%%'' dir. For example:<code ini>
+Environment=SSH_AUTH_SOCK=%t/ssh/ssh-agent.socket
+</code>
+<WRAP centeralign center box smaller blue 90%>
+For multi-user systems, make sure to add/configure files in ''%%/etc/skel%%'' so the agent dependencies are set up during user creation.
+</WRAP>
+
+----
+
+=====Conclusion=====
+That's the general idea and should get your system set up with as many ssh-agents as you would ever want to create. Enjoy!
+
+----
+=====Links=====
+  * https://manpages.debian.org/stable/openssh-client/ssh-agent.1.en.html
+  * https://manpages.debian.org/stable/systemd/systemd.service.5.en.html#SERVICE_TEMPLATES
+  * https://manpages.debian.org/stable/systemd/systemd.unit.5.en.html#SPECIFIERS
+  * https://manpages.debian.org/stable/openssh-client/ssh-agent.1.en.html
+  * https://manpages.debian.org/stable/openssh-client/ssh_config.5.en.html
+  * https://manpages.debian.org/stable/openssh-client/ssh-add.1.en.html
+  * https://manpages.debian.org/stable/systemd/tmpfiles.d.5.en.html
+  * https://manpages.debian.org/stable/systemd/systemd-tmpfiles.8.en.html
+  * https://wikitech.wikimedia.org/wiki/Managing_multiple_SSH_agents
+  * https://unix.stackexchange.com/a/623559

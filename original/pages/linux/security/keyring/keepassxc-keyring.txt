@@ -1,0 +1,133 @@
+======KeepassXC as the System Keyring======
+
+----
+
+=====Description=====
+
+It is possible to use [[https://keepassxc.org/|KeePassXC]] as the system keyring.
+
+<WRAP info smaller>
+The following information requires at least KeePassXC 2.5.0 installed.
+</WRAP>
+
+----
+
+=====Configure=====
+  * Stop gnome-keyring if it's installed.
+    * ''%%pgrep -l gnome%%''
+    * ''%%pkill pid%%''
+  * Create a new group in the database that will hold the passwords used for the keyring
+  * **Tools > Settings > Secret Service Integration >** 
+    * Enable KeepassXC Freedesktop.org Secret Service integration
+  * **Database > Database Settings > Secret Service Integration > Expose entries under this group**:
+    * Select the new group
+
+----
+
+====Disable gnome-keyring====
+
+Create 3 .desktop files and place them in ''%%~/.config/autostart%%'':
+  * **gnome-keyring-pkcs11.desktop**:<code ini>
+[Desktop Entry]
+Hidden=true
+</code>
+  * **gnome-keyring-secrets.desktop**:<code ini>
+[Desktop Entry]
+Hidden=true
+</code>
+  * **gnome-keyring-ssh.desktop**:<code ini>
+[Desktop Entry]
+Hidden=true
+</code>
+  * https://unix.stackexchange.com/questions/271661/disable-gnome-keyring-daemon
+
+----
+
+=====Accessing Entries=====
+  * Using [[linux:security:keyring:secret-tool|secret-tool]]
+  * Using [[linux:security:keyring:keyring|keyring]]
+
+----
+
+=====Entries=====
+There are different fields that are stored in the **Advanced > Attributes** section of each entry.
+
+You can create your own key:value pairs for easier access and searching of specific entries.
+
+Here's a couple examples:
+
+====Nextcloud Desktop====
+==General==
+<code>
+Title: Nextcloud Desktop
+Username: username
+Password: *******
+URL: https://path.to.nextcloud
+</code>
+
+==Advanced==
+<code>
+Type: Password
+Use: Saved password or login
+server: Nextcloud
+type: plaintext
+user: username:https://path.to.nextcloud/:0
+</code>
+
+----
+
+====Thunar====
+You can configure access to remote filesystems for browsing in Thunar.
+
+==General==
+  * The double ''%%//%%'' is not a typo.
+  * The password field should contain the password for the ssh key.
+<code>
+Title: username@hostname//home/username/.ssh/key
+Username: username
+Password: ********
+</code>
+
+==Advanced==
+<code>
+authtype: publickey
+object: /home/username/.ssh/key
+protocol: sftp
+server: hostname
+user: username
+xdg:schema: org.gnome.keyring.NetworkPassword
+
+</code>
+
+----
+====keyring entries====
+Entries created with [[linux:security:keyring:keyring|keyring]] have the following attributes
+==General==
+<code>
+Title: Password for 'username' on 'service'
+Username: username
+Password: ********
+</code>
+==Advanced==
+<code>
+application: Python keyring library
+service: twitter
+username: username
+</code>
+
+----
+
+=====Suggestions=====
+  * I would recommend creating (at minimum) the following attributes every time for each entry:<code bash>
+secret-tool store --label='My Label' service <service> username <username>
+</code>
+  * This way, it will be available to [[linux:security:keyring:keyring|python3-keyring]] as well.
+
+----
+
+=====Links=====
+  * https://www.cogitri.dev/posts/03-keepassxc-freedesktop-secret/
+  * https://www.reddit.com/r/linux/comments/ehfhud/keyring_alternative_access_keepassxc_entries_of/
+  * https://rtfm.co.ua/en/keepass-an-mfa-totp-codes-a-browsers-passwords-ssh-keys-passwords-storage-configuration-and-secret-service-integration/
+  * https://isamert.net/jekyll/update/2018/10/05/automatize-your-logins-with-gnome-keyring-and-keepassxc.html
+  * https://rtfm.co.ua/en/keepass-ssh-keys-passwords-storage-and-decryption-on-linux/

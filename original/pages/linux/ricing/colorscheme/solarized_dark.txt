@@ -1,0 +1,49 @@
+======Solarized Dark Colorscheme======
+
+----
+
+=====Solarized Dark VT Colorscheme=====
+Here's a slightly modified version of the Solarized Dark Colorscheme for your virtual terminal (tty).
+
+{{linux:ricing:colorscheme:vt:solarized_dark_vt.png?direct&600|}}
+
+----
+====Colors====
+
+^        ^ color0 ^ color1 ^ color2 ^ color3 ^ color4 ^ color5 ^ color6 ^ color7 ^ color8 ^ color9 ^ color10 ^ color11 ^ color12 ^ color13 ^ color14 ^ color15 ^
+^ red    | 0  | 220 | 133 | 181 | 38  | 211 | 42  | 238 | 7  | 203 | 88  | 101 | 131 | 108 | 147 | 253 |
+^ green  | 43 | 50  | 153 | 137 | 139 | 54  | 161 | 232 | 54 | 75  | 110 | 123 | 148 | 113 | 161 | 246 |
+^ blue   | 54 | 47  | 0   | 0   | 210 | 130 | 152 | 213 | 66 | 22  | 117 | 131 | 150 | 196 | 161 | 227 |
+
+====Scripts====
+
+<file sh solarized_dark>
+#!/bin/sh
+
+PREREQ=""
+prereqs()
+{
+     echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+     prereqs
+     exit 0
+     ;;
+esac
+
+# Solarized Dark
+echo "0,220,133,181,38,211,42,238,7,203,88,101,131,108,147,253
+43,50,153,137,139,54,161,232,54,75,110,123,148,113,161,246
+54,47,0,0,210,130,152,213,66,22,117,131,150,196,161,227" | setvtrgb -
+</file>
+
+\\
+
+  * [[linux:ricing:virtual_terminal_color#applying_a_vt_colorscheme_at_boot|Applying a VT Colorscheme]]
+
+----
+
+=====Links=====
+  * https://ethanschoonover.com/solarized/

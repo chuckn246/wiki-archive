@@ -1,0 +1,76 @@
+======LUKS Encrypted Container======
+
+----
+
+<WRAP tip>
+With cryptsetup 2.1.0, the LUKS header takes up just under 16MiB, so the partition size must be 16MiB + the size of the data you want to store in it.
+</WRAP>
+
+=====Create a LUKS Storage Container=====
+  * Create a 20Mb file filled with random data: ((https://pthree.org/2012/02/20/randomize-first-the-encrypt-your-block-device/))<code>
+sudo dd if=/dev/urandom of=encrypted.luks.img iflag=fullblock bs=1M count=20
+</code>
+  * Switch to root:<code>
+sudo -s
+</code>
+  * Set permissions:<code>
+chmod go= encrypted.luks.img
+</code>
+  * Configure encryption:<code>
+cryptsetup --verbose luksFormat encrypted.luks.img
+cryptsetup --verbose --use-random luksFormat encrypted.luks.img
+</code>
+  * Open the encrypted container:<code>
+cryptsetup --verbose luksOpen encrypted.luks.img encrypted
+</code>
+  * Create filesystem:<code>
+mkfs.ext4 /dev/mapper/encrypted
+</code>
+  * Create directory to mount the container:<code>
+mkdir /mnt/encrypted
+</code>
+  * Mount the container:<code>
+mount -t ext4 -o journal_checksum /dev/mapper/encrypted /mnt/encrypted
+</code>
+  * Chown it:<code>
+chown chuck: /mnt/encrypted
+</code>
+  * Set permissions:<code>
+chmod go= /mnt/encrypted
+</code>
+  * Switch back to $USER:<code>
+exit
+</code>
+
+
+----
+
+=====Copy Files to the LUKS Storage Container=====
+  * Copy or create your files:<code>
+cp /files/to/copy /mnt/encrypted
+</code>
+
+----
+
+=====Close the LUKS Storage Container and Lock it=====
+  * Switch to root:<code>
+sudo -s
+</code>
+  * Unmount the container:<code>
+umount /mnt/encrypted
+</code>
+  * Close the encrypted container:<code>
+cryptsetup luksClose encrypted
+</code>
+  * Switch back to $USER:<code>
+exit
+</code>
+
+----
+
+=====Change Password on a LUKS Encrypted Storage Container=====
+  * If you want/need to change the password:<code bash>
+sudo cryptsetup luksChangeKey encrypted.luks.img
+</code>
+
+----

@@ -1,0 +1,7 @@
+======Ricing======
+Customizing things.
+
+----
+
+  * [[linux:ricing:virtual_terminal_color|Virtual Terminal Color]]
+  * [[linux:ricing:virtual_terminal_font|Virtual Terminal Font]]

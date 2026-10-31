@@ -1,0 +1,6 @@
+======Homelab Diagrams======
+Here's a simplified look at my current setup:
+
+{{ :homelab:diagrams:homelab-simplified.png?direct&600 |}}
+
+----

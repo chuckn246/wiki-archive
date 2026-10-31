@@ -1,0 +1,162 @@
+======Create LXC Templates======
+Every time inspiration struck or I saw a blog post with something I wanted to try, it was frustrating and time consuming to get the base operating system set up to the way I like it before proceeding with the project.
+
+Now I just update the template each point release or when I add something substantial to my dotfiles so it's ready to go whenever I need to spin up a fresh container.
+
+It only takes a few minutes to set up or modify and can save lots of time in the long run.
+
+----
+
+=====Select an Image=====
+  * SSH into Proxmox:<code bash>
+ssh proxmox
+</code>
+  * List available system images (change sas-storage to wherever they are stored on your system eg. local):<code bash>
+sudo pveam list sas-storage
+</code>
+    * If what we want isn't there, update container template database:<code bash>
+sudo pveam update
+</code>
+    * List available images:<code bash>
+sudo pveam available
+</code>
+    * You can also filter the output:<code bash>
+sudo pveam available --section system
+</code>
+  * Download the image:<code bash>
+sudo pveam download sas-storage debian-10.0-standard_10.0-1_amd64.tar.gz
+</code>
+  * See ''%%man pveam%%'' for more details.
+
+----
+
+=====Create the Container=====
+Now we need to create the container that we will be updating and adding our programs to. Note that you will need to modify the following command to match your system.
+  * Create a container:<code bash>
+sudo pct create 250 sas-storage:vztmpl/debian-10.0-standard_10.0-1_amd64.tar.gz \
+  --storage sas-lvm --rootfs volume=sas-lvm:16 \
+  --ostype debian --arch amd64 --password insecure --unprivileged 1 \
+  --cores 1 --memory 1024 --swap 1024 \
+  --hostname lxc-template --searchdomain local.lan --nameserver xxx.xxx.xxx.x \
+  --net0 name=eth0,bridge=vmbrxx,ip=dhcp,gw=xxx.xxx.xx.x,type=veth \
+  --start true
+</code>
+  * See ''%%man pct%%'' for more information.
+
+----
+
+=====Modify the Container=====
+Here's where we update/add programs/configure it to our liking.
+
+  * Enter the container:<code bash>
+sudo pct enter 250
+</code>
+  * Do stuff:
+    * Update the system:<code bash>
+apt update && apt upgrade
+</code>
+    * Install some packages:<code bash>
+apt install curl git screen stow unattended-upgrades vim
+</code>
+    * Set Vim as default editor:<code bash>
+update-alternatives --set editor /usr/bin/vim.basic
+</code>
+    * Create user:<code bash>
+adduser user
+</code>
+    * Switch to user:<code bash>
+su - user
+</code>
+    * Clone dotfiles:<code bash>
+git clone https://path.to/dotfiles ~/.dotfiles
+</code>
+    * Stow the dotfiles:<code bash>
+stow dotfiles
+</code>
+    * Create ''%%~/.ssh%%'' directory:<code bash>
+mkdir ~/.ssh
+</code>
+    * Create ''%%~/.ssh/authorized_keys%%'' file with your pubkey
+    * And so on....
+    * Bonus points if you have an Ansible playbook to run the commands!
+
+----
+
+=====Create the template=====
+In order to turn the container into a template, we need to delete the network interface then create a backup.
+  * From proxmox (not inside the container):
+  * Remove the network interface:<code bash>
+sudo pct set 250 --delete net0
+</code>
+  * Create a backup:<code bash>
+vzdump 250 --mode stop --compress gzip --dumpdir /media/sas/data/template/cache/
+</code>
+  * The new file will be located in:<code bash>
+/media/sas/data/template/cache
+</code>
+  * You can leave it as is or rename it to something:
+    * Change directories:<code bash>
+cd /media/sas/data/template/cache
+</code>
+    * Rename it:<code bash>
+sudo mv new_vz_dump.tar.gz custom_debian_10.4.tar.gz
+</code>
+  * See ''%%man vzdump%%'' for info.
+
+----
+
+=====Cleaning up=====
+Feel free to delete the container we used to make the template (250). 
+
+----
+
+=====Modifying or Updating=====
+It's really easy to modify the container when a new version of the OS is released or you want to add something to your templates.
+  * Create a container with your custom file:<code bash>
+sudo pct create 250 sas-storage:vztmpl/custom_debian_10.4.tar.gz \
+  --storage sas-lvm --rootfs volume=sas-lvm:16 \
+  --ostype debian --arch amd64 --password insecure --unprivileged 1 \
+  --cores 1 --memory 1024 --swap 1024 \
+  --hostname lxc-template --searchdomain local.lan --nameserver xxx.xxx.xxx.x \
+  --net0 name=eth0,bridge=vmbrxx,ip=dhcp,gw=xxx.xxx.xxx.x,type=veth \
+  --start true
+</code>
+  * Enter the container:<code bash>
+sudo pct enter 250
+</code>
+  * Do stuff:
+    * Update the system:<code bash>
+apt update && apt upgrade
+</code>
+    * Install some packages
+    * Add new dotfiles
+    * And so on..
+  * Exit back to Proxmox:<code bash>
+exit
+</code>
+  * Remove the network device:<code bash>
+sudo pct set 250 --delete net0
+</code>
+  * Create the backup:<code bash>
+vzdump 250 --mode stop --compress gzip --dumpdir /media/sas/data/template/cache/
+</code>
+  * You can leave it as is or rename it to something:
+    * Change directories:<code bash>
+cd /media/sas/data/template/cache
+</code>
+    * Rename it:<code bash>
+sudo mv new_vz_dump.tar.gz custom_debian_10.5.tar.gz
+</code>
+
+----
+
+=====Conclusion=====
+Now every time you want to create a lxc container to use, it will be ready to go with things set just the way you like!
+
+----
+=====Links=====
+
+  * https://pve.proxmox.com/wiki/Linux_Container
+  * https://pve.proxmox.com/pve-docs/pct.1.html
+  * https://pve.proxmox.com/pve-docs/pct-plain.html
+  * https://pve.proxmox.com/pve-docs/vzdump.1.html

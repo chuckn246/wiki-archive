@@ -1,0 +1,12 @@
+======Dell r210ii======
+I bought the r210ii to serve as my [[:freebsd:distribution:pfsense|pfSense]] firewall. After a lot of frustration, I can say that I have a pretty good handle on pfSense configuration and am very happy with the resuts.
+
+==== Specs ====
+^ Qty ^ Item                 ^ Desc              ^
+| 1   | Intel Xeon E3-1220V2 | 3.10Ghz Processor |
+| 2   | 4GB PC3L             | 8GB Ram           |
+| 1   | Seagate 650GB HD     | 650Gb HD          |
+| 1   | 4 Port Nic           | Nic Card          |
+
+==== Software ====
+  * [[:freebsd:distribution:pfsense|pfSense]]

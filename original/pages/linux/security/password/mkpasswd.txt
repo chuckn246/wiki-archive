@@ -1,0 +1,32 @@
+======mkpasswd======
+
+----
+
+=====Description=====
+Useful for generating passwords for ''%%/etc/shadow%%'' and for use in [[https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-encrypted-passwords-for-the-user-module|Ansible playbooks]].
+
+----
+
+=====Install=====
+  * Install ''%%mkpasswd%%'' which is included in the ''%%whois%%'' package:<code bash>
+sudo apt install whois
+</code>
+
+----
+
+=====Use=====
+  * Encrypt a string as a SHA-512 password:<code bash>
+mkpasswd --method=sha-512
+</code>
+  * Encrypt a string as a yescrypt password:<code bash>
+mkpasswd --method=yescrypt
+</code>
+
+----
+
+=====Links=====
+  * https://packages.debian.org/bullseye/whois
+  * https://manpages.debian.org/bullseye/whois/mkpasswd.1.en.html
+  * https://www.debian.org/releases/bullseye/amd64/release-notes/ch-information.en.html#pam-default-password
+
+    

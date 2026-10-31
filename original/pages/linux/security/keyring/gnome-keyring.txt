@@ -1,0 +1,86 @@
+======gnome-keyring======
+
+----
+
+=====Description=====
+The Gnome Keyring stores secrets, passwords, keys, certificates and makes them available to applications. It is integrated with the user's login so their secret storage can be unlocked when the user logins to the session.
+
+----
+
+=====Manage=====
+
+====seahorse====
+You can manage gnome-keyring entries by installing the ''%%seahorse%%'' package.
+
+  * Install ''%%seahorse%%'':<code bash>
+sudo apt install seahorse
+</code>
+
+----
+
+====secret-tool====
+See [[linux:security:keyring:secret-tool|secret-tool]] for more info.
+
+''%%{attribute} {value}%%'' references key:value pairs stored under the Advanced section of an Entry.
+
+  * Create entry:<code bash>
+secret-tool store --label='My Label' {attribute} {value} {attribute2} {value2} [...]
+</code>
+  * Retrieve an entry:<code bash>
+secret-tool lookup {attribute} {value} {attribute2} {value2} [...]
+</code>
+
+----
+
+====keyring====
+See [[linux:security:keyring:keyring|keyring]] for more info.
+
+===Python===
+  * Create an entry:<code python>
+import keyring
+keyring.set_password("system", "username", "password")
+</code>
+  * Retrieve a password:<code python>
+import keyring
+keyring.get_password("system", "username")
+</code>
+
+===cli===
+  * Create an entry:<code bash>
+keyring set SERVICE USERNAME
+</code>
+  * Retrieve an entry:<code bash>
+keyring get SERVICE USERNAME
+</code>
+  * Delete an entry:<code bash>
+keyring del SERVICE USERNAME
+</code>
+
+----
+=====Reset=====
+  * Resetting everything (delete all passwords and start new keyring):<code>
+rm ~/.local/share/keyrings/login.keyring</code>
+
+----
+
+=====Reuse=====
+Using the same keyring (resetting keyring password but keeping old passwords in keyring):
+
+  * Change directories:<code bash>
+cd ~/.local/share/keyrings/
+</code>
+  * Rename the existing keyring:<code bash>
+mv login.keyring login.keyring.backup
+</code>
+  * Create a new keyring file from Gnome Keyring with the name ''%%login%%''
+  * Replace the new keyring file with the backup of the old keyring file<code>
+mv login.keyring.backup login.keyring      
+</code>
+  * https://askubuntu.com/a/65294
+
+----
+
+=====Links=====
+  * https://wiki.archlinux.org/index.php/GNOME/Keyring
+  * https://wiki.gnome.org/action/show/Projects/GnomeKeyring
+  * https://rtfm.co.ua/en/what-is-linux-keyring-gnome-keyring-secret-service-and-d-bus/

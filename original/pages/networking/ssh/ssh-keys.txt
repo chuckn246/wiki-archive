@@ -1,0 +1,123 @@
+======SSH Key Management======
+
+This page is meant to assist in setting up and maintaining SSH keys.
+
+----
+
+=====SSH Directory Permissions=====
+
+<code bash>
+chmod 700 ~/.ssh
+chmod 644 ~/.ssh/authorized_keys
+chmod 644 ~/.ssh/known_hosts
+chmod 644 ~/.ssh/config
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+chmod 600 ~/.ssh/id_rsa
+chmod 644 ~/.ssh/id_rsa.pub
+</code>
+
+----
+
+=====Generating SSH Keys=====
+====ED25519====
+  * Change to ''%%~/.ssh%%'':<code bash>
+cd ~/.ssh
+</code>
+  * Generate an **Ed25519** ssh key:<code bash>
+ssh-keygen -t ed25519 -a 256
+</code>
+  * Generate an **Ed25519** ssh key with a specific name:<code bash>
+ssh-keygen -f <keyname> -t ed25519 -a 256
+</code>
+
+----
+
+====RSA====
+  * Change to ''%%~/.ssh%%'':<code bash>
+cd ~/.ssh
+</code>
+  * Generate a **RSA** ssh key:<code bash>
+ssh-keygen -t rsa -b 4096 -o -a 256
+</code>
+  * Generate a **RSA** ssh key with a specific name:<code bash>
+ssh-keygen -f <keyname> -t rsa -b 4096 -o -a 256
+</code>
+
+----
+
+=====Verifying SSH Keys=====
+====Verify SSH Key Password====
+  * Change to ''%%~/.ssh%%'':<code bash>
+cd ~/.ssh
+</code>
+  * Verify password:<code bash>
+ssh-keygen -y -f id_ed25519
+</code>
+  * Upon entering successful passphrase, it prints the pubkey:<code bash>
+Enter passphrase: 
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJAZcdEIpPbJal7CEsIpaHzBEjs/8nedIvDA/sDlvqll chuck@gaming
+</code>
+  * Enter the wrong passphrase:<code bash>
+ssh-keygen -y -f id_ed25519
+Enter passphrase: 
+Load key "id_ed25519": incorrect passphrase supplied to decrypt private key
+</code>
+
+----
+
+====Verify SSH Private Key Matches Public Key====
+  * Change to ''%%~/.ssh%%'':<code bash>
+cd ~/.ssh
+</code>
+  * Verify ssh key matches it's private key:<code bash>
+ssh-keygen -l -f id_ed25519; ssh-keygen -l -f id_ed25519.pub
+</code>
+  * Output should match:<code bash>
+256 SHA256:W5o5+DV3Jaba4txzQ58gZuIZvZD44McIU7tV9I4LZpw chuck@gaming (ED25519)
+256 SHA256:W5o5+DV3Jaba4txzQ58gZuIZvZD44McIU7tV9I4LZpw chuck@gaming (ED25519)
+</code>
+
+----
+
+=====Modifying SSH Keys=====
+
+====Change SSH Key Password====
+  * Change to ''%%~/.ssh%%'':<code bash>
+cd ~/.ssh
+</code>
+  * Change password:<code bash>
+ssh-keygen -p -f id_ed25519
+</code>
+
+----
+====Change SSH Key Comment====
+  * Change to ''%%~/.ssh%%'':<code bash>
+cd ~/.ssh
+</code>
+  * Change comment (email):<code bash>
+ssh-keygen -c -f id_ed25519
+Enter passphrase: 
+Key now has comment 'chuck@hostname'
+Enter new comment: user@newname
+The comment in your key file has been changed.
+</code>
+
+----
+
+=====SSH-Agent=====
+  * Add the key to the ssh-agent.<code bash>
+ssh-add keyname
+</code>
+  * Add the key to the server using the credentials from the config file.<code bash>
+ssh-copy-id -i keyname servername
+</code>
+
+----
+
+=====Links=====
+  * https://manpages.debian.org/stable/openssh-client/ssh.1.en.html
+  * https://manpages.debian.org/stable/openssh-client/ssh-keygen.1.en.html
+  * https://manpages.debian.org/stable/openssh-client/ssh-add.1.en.html
+  * https://manpages.debian.org/stable/openssh-client/ssh-copy-id.1.en.html
+

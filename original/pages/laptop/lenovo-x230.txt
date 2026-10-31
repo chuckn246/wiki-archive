@@ -1,0 +1,2 @@
+======Lenovo x230======
+  * [[laptop:lenovo-x230:flash-lenovo-x230-coreboot|Flashing Coreboot on a x230]]

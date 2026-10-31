@@ -1,0 +1,44 @@
+<WRAP group>
+<WRAP announcement 100%>
+===Home Lab===
+  * [[homelab:server:r210|Dell r210ii]]
+  * [[homelab:server:r510|Dell r510]]
+  * [[homelab:server:r710|Dell r710]]
+  * [[homelab:diagrams|Diagrams]]
+</WRAP>
+
+<WRAP announcement 100%>
+===Laptops===
+  * [[laptop:lenovo-x200:flash-lenovo-x200-libreboot|Lenovo x200 Libreboot]]
+  * [[laptop:lenovo-x230:flash-lenovo-x230-coreboot|Lenovo x230 Coreboot]]
+
+</WRAP>
+
+<WRAP announcement 100%>
+===Networking===
+  * [[networking:ssh|SSH]]
+
+</WRAP>
+<WRAP announcement 100%>
+===OS===
+  * [[linux:distribution:debian|Debian]]
+  * [[linux|Linux]]
+  * [[linux:distribution:proxmox|Proxmox]]
+</WRAP>
+<WRAP announcement 100%>
+===Privacy/Security===
+  * [[encryption|Encryption]]
+  * [[security:passwords|Passwords]]
+</WRAP>
+
+<WRAP announcement 100%>
+===USB Devices===
+  * [[usb-devices:onerng|OneRNG]]
+  * [[usb-devices:ch341a|ch341a]]
+</WRAP>
+
+<WRAP announcement 100%>
+===Contact===
+  * [[contact|Contact Me]]
+</WRAP>
+</WRAP>

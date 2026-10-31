@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+._*
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+
+# Jekyll
+_site/
+.jekyll-cache/
+.jekyll-metadata
+.sass-cache/
+
+# Ruby / Bundler
+.bundle/
+vendor/bundle/
+
+# vim: ft=gitignore ts=2 sts=2 sw=2 et

@@ -1,0 +1,281 @@
+# Preseed Debian 9 -- UEFI with Encrypted LVM
+
+I had a difficult time finding good, easy to digest info online on how
+to do preseed a Debian install with Encrypted LVM. There's a couple of
+blog posts, the Debian Wiki and some Serverfault/StackOverflow questions
+that led the way for me to accomplish this. (the helpful links are at
+the bottom of this post.)
+
+------------------------------------------------------------------------
+
+## The Goal
+
+Here's a breakdown of what I was hoping to accomplish by preseeding the
+Debian install.
+
+### Users
+
+I disable the root account which installs sudo and adds the created user
+to the sudo group. The preseed.cfg is configured to do that as well.
+
+It is set to create a user and assign them a temporary password
+"insecure". Then, at first login the password expires and asks for a new
+password. I feel doing it that way makes it safer for me to put the
+config online in a git repo. I could always change it before adding it
+to the ISO.
+
+There is also an option of creating an encrypted hash of the password to
+put in the config file. If you want to do that you can install whois and
+use the mkpasswd utility.
+
+```
+[user@host]$ mkpasswd -m sha-512 -S $(pwgen -ns 16 1) insecure
+Password: $6$CLWf73UuuEggHhWL$53WWmQF5Oe7WTtUU/Fz0f2ierBXVqzt8YQD1rfVRdcTm8MplzIOABBIDtXWzP0fpWI9F.RmeR4Kt.Lfk6irAv1
+```
+
+If you decide to take that route, make sure to edit the bottom of the
+preseed.cfg to remove the code that expires the weak password.
+
+------------------------------------------------------------------------
+
+### Networking
+
+As it sits in the git gist, DHCP is used to assign the IP and hostname.
+
+I'll configure it to assign a static IP and hostname during the
+networking section of the install before adding it to the ISO.
+
+------------------------------------------------------------------------
+
+### Partitioning
+
+I wanted to be able to re-create a UEFI Debian install that also has
+Encrypted LVM partitions.
+
+Over the past few months I've been experimenting with different
+partition layouts and here is where I settled (for now):
+
+#### Unencrypted
+```
+~550M – /boot/efi
+~250M – /boot
+```
+
+#### Encrypted LVM
+```
+~15G – /
+~120G – /home
+~32G – Swap
+~4G – /tmp
+~10G – /var
+```
+
+Rest of the disk on standby for future use.
+
+If you don't need any special partitioning, it is a lot easier to select
+one of the default options. (atomic, home, or multi) Just make sure to
+change the line to use it and comment out the custom recipe.
+```
+d-i partman-auto/choose_recipe select multi
+```
+
+See the gist at the bottom of the page for an example of custom
+partition layouts.
+
+------------------------------------------------------------------------
+
+### Packages
+
+When manually installing Debian on my Gaming Desktop with i3wm, I
+usually only select Standard System Utilities and SSH-Server at the
+software installation prompt.
+
+I needed to add **non-free** and **contrib** to the
+`etc/apt/sources.list` for installing **nvidia-drivers** and **steam**.
+
+Adding the **i386** architecture for installing Steam and a few other
+packages that require it was also a priority.
+
+I figured that getting a jump on installing a desktop environment,
+utilities and drivers, etc. would be pretty awesome. I configured it to
+install **vim** and **xorg**.
+
+Feel free to add more packages to the following line:
+```
+d-i pkgsel/include string openssh-server build-essential vim git
+```
+
+I also had success adding packages to the bottom of the file like so:
+
+```
+d-i preseed/late_command string apt-install figlet fortune-mod;
+```
+
+Not sure if one method is preferred to the other..
+
+------------------------------------------------------------------------
+
+## Using the preseed.cfg
+
+### Network
+
+You can place the preseed.cfg file on a web server of some sort and
+point the installer at it.
+
+You can point the installer to a gist or file in a repository, or host
+it on a webserver.
+
+If you have another computer on the same network, you can create a
+python server in the directory like so:
+
+```
+[user@host:preseed]$ ls
+preseed.cfg
+
+[user@host:preseed]$ python3 -m http.server
+Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+```
+
+The file in that directory and will be available at "<http://xx.xx.xx.xx:8000/preseed.cfg>"
+
+After starting the installer, the network should be auto configured with
+DHCP. If you want to change the hostname from the default of 'debian'
+once it's done, you can Alt+F2 and edit /etc/hostname with nano. Then
+Alt+F1 back to the installer, select Advanced Options \> Automated
+Install and it will continue from there.
+
+------------------------------------------------------------------------
+
+### ISO
+
+Adding it to the ISO is easy to do as well.
+
+I used the following packages to complete these steps:
+
+- `xorriso`
+- `isolinux`
+- `zip`
+- `unzip`
+
+#### Steps
+
+- Download the debian iso
+- Rename it to debian.iso
+- Make a directory to hold the extracted iso:
+```
+mkdir isofiles
+```
+
+- Extract ISO to the isofiles directory:
+```
+xorriso -osirrox on -indev debian.iso -extract / isofiles
+```
+
+- Add write permissions to initrd:
+```
+chmod +w isofiles/install.amd/
+```
+
+- Unzip initrd:
+```
+gunzip isofiles/install.amd/initrd.gz
+```
+
+- Add preseed to the initrd:
+```
+echo preseed.cfg | cpio -H newc -o -A -F isofiles/install.amd/initrd
+```
+
+- Re-zip initrd:
+```
+gzip isofiles/install.amd/initrd
+```
+
+- Remove write abilities of initrd:
+```
+chmod -w -R isofiles/install.amd
+```
+
+- Enter isofiles directory:
+```
+cd isofiles
+```
+
+- Generate new md5sum.txt:
+```
+md5sum `find -follow -type f` > md5sum.txt
+```
+
+- Move back a directory:
+```
+cd ..
+```
+
+- Generate new iso:
+
+```
+[user@host]$ xorriso -as mkisofs \
+  -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
+  -c isolinux/boot.cat \
+  -b isolinux/isolinux.bin \
+  -no-emul-boot \
+  -boot-load-size 4 \
+  -boot-info-table \
+  -eltorito-alt-boot \
+  -e boot/grub/efi.img \
+  -no-emul-boot \
+  -isohybrid-gpt-basdat \
+  -o preseed-debian.iso \
+  isofiles/
+```
+
+------------------------------------------------------------------------
+
+### Script it!
+
+After doing that a couple of times when making changes, it got a little
+old. I figured why not create a bash script to handle most of it for me?
+You can check it out at my [git repo](https://gitlab.com/preseed/preseed-script/blob/master/preseed2iso.sh).
+
+#### Install using the ISO
+
+Take the generated iso (preseed-debian.iso if you're using the commands
+from above) and write it to a USB jump drive or upload it to Proxmox.
+
+Boot the computer/VM from it and at the menu, select Advanced Options \>
+Automated Install.
+
+Wait a few seconds and it should start the installation process!
+
+------------------------------------------------------------------------
+
+## Final Thoughts
+
+There is still a small amount of human interaction necessary to install,
+but it sure beats doing the whole thing manually!
+
+We still have to:
+
+- Tell the installer to use automated install
+- Enter password for encryption (can be preseeded)
+- Interrupt writing random data if you want (can be preseeded)
+
+Now I won't be so hesitant to do things that may mess up my install
+since it's much easier to re-install Debian. All I'll have to do is run
+the preseeded iso then pull my dotfiles and stow them. Things can be
+back up and running in no time!
+
+------------------------------------------------------------------------
+
+## Links
+
+- <https://wiki.debian.org/DebianInstaller/Preseed>
+- <https://www.debian.org/releases/stable/i386/apbs02.html.en>
+- <https://salsa.debian.org/installer-team/debian-installer/blob/master/doc/devel/partman-auto-recipe.txt>
+- <http://ptomusk.blogspot.com/2012/09/ubuntu-preseedcfg-with-encrypted-lvm.html>
+- <https://www.linuxjournal.com/content/preseeding-full-disk-encryption>
+- <https://secopsmonkey.com/custom-partioning-using-preseed.html>
+- <https://fak3r.com/2011/08/18/howto-automate-debian-installs-with-preseed/>
+- <https://www.pitt-pladdy.com/blog/_20150712-141725_0100_Home_Lab_Project_Debian_Ubuntu_Preseed/>
+- <https://superuser.com/questions/868596/trying-to-create-two-lvm-groups-using-preseed>
+- <https://wiki.debian.org/DebianInstaller/Preseed/EditIso>

@@ -1,0 +1,57 @@
+# Gruvbox Dark Colorscheme
+
+------------------------------------------------------------------------
+
+## Gruvbox Dark VT Colorscheme
+
+Here's a slightly modified version of the Gruvbox Dark Colorscheme for
+your virtual terminal (tty).
+
+![gruvbox_dark_vt.png](../../../media/linux/ricing/colorscheme/vt/gruvbox_dark_vt.png)
+
+------------------------------------------------------------------------
+
+### Colors
+
+          color0   color1   color2   color3   color4   color5   color6   color7   color8   color9   color10   color11   color12   color13   color14   color15
+  ------- -------- -------- -------- -------- -------- -------- -------- -------- -------- -------- --------- --------- --------- --------- --------- ---------
+    red   40       204      152      215      69       177      104      168      146      251      184       250       131       211       142       235
+   green  40       36       151      153      133      98       157      153      131      73       187       189       165       134       192       219
+   blue   40       29       26       33       136      134      106      132      116      52       38        47        152       155       124       178
+
+------------------------------------------------------------------------
+
+### Script
+
+``` sh
+#!/bin/sh
+
+PREREQ=""
+prereqs()
+{
+     echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+     prereqs
+     exit 0
+     ;;
+esac
+
+# Gruvbox Dark
+echo "40,204,152,215,69,177,104,168,146,251,184,250,131,211,142,235
+40,36,151,153,133,98,157,153,131,73,187,189,165,134,192,219
+40,29,26,33,136,134,106,132,116,52,38,47,152,155,124,178" | setvtrgb -
+```
+
+\
+
+- [Applying a VT
+  Colorscheme](../virtual_terminal_color.md#applying-a-vt-colorscheme-at-boot)
+
+------------------------------------------------------------------------
+
+## Links
+
+- <https://github.com/morhetz/gruvbox>

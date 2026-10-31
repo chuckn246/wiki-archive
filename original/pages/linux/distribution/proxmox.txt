@@ -1,0 +1,16 @@
+======Proxmox======
+Proxmox things.
+
+----
+=====KVM=====
+  * [[proxmox:kvm:kvm-automated|Speedy kvm creation]] with [[linux:distribution:debian:preseed:debian-10-preseed|Debian 10 preseed]] and Ansible
+
+----
+
+=====LXC=====
+  * [[proxmox:lxc:lxc-template|Create lxc templates]] that are ready to go at a moment's notice
+
+----
+
+=====Links=====
+  * https://www.proxmox.com/en/

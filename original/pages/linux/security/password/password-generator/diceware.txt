@@ -1,0 +1,32 @@
+======diceware======
+
+----
+
+=====Description=====
+Generate passwords from wordlists.
+
+----
+
+=====Install=====
+  * Install diceware:<code bash>
+sudo apt install diceware
+</code>
+
+----
+
+=====Use=====
+  * Generate diceware password:<code bash>
+diceware
+</code>
+  * Generate diceware password with 10 words:<code bash>
+diceware -n 10
+</code>
+  * Generate diceware password using an asterisk as the delimiter:<code bash>
+diceware -d '*'
+</code>
+
+----
+
+=====Links=====
+  * https://packages.debian.org/bullseye/diceware
+  * https://manpages.debian.org/bullseye/diceware/diceware.1.en.html

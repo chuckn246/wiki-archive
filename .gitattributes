@@ -1,0 +1,23 @@
+# Automatically detect text files
+* text=auto
+
+# Consistent LF line endings
+*.md   text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.html text eol=lf
+*.css  text eol=lf
+
+# Preserve original DokuWiki files without normalization
+original/** -text
+
+# Binary assets
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.webp binary
+
+# vim: ft=gitattributes ts=2 sts=2 sw=2 et

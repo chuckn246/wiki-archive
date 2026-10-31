@@ -1,0 +1,26 @@
+======makepasswd======
+
+----
+
+=====Description=====
+Generate and/or encrypt passwords.
+
+----
+
+=====Install=====
+  * Install ''%%makepasswd%%'':<code bash>
+sudo apt install makepasswd
+</code>
+
+----
+
+=====Use=====
+  * Generate a password 40 chars long:<code bash>
+makepassword -chars 40
+</code>
+
+----
+
+=====Links=====
+  * https://packages.debian.org/bullseye/makepasswd
+  * https://manpages.debian.org/bullseye/makepasswd/makepasswd.1.en.html
