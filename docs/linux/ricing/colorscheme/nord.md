@@ -47,8 +47,7 @@ echo "59,191,163,235,129,180,136,229,76,191,163,235,129,180,143,236
 
 \
 
-- [Applying a VT
-  Colorscheme](../virtual_terminal_color.md#applying-a-vt-colorscheme-at-boot)
+- [Applying a VT Colorscheme](../virtual_terminal_color.md#applying-a-vt-colorscheme-at-boot)
 
 ------------------------------------------------------------------------
 

@@ -6,8 +6,7 @@ Proxmox things.
 
 ## KVM
 
-- [Speedy kvm creation](../../proxmox/kvm/kvm-automated.md) with [Debian 10
-  preseed](debian/preseed/debian-10-preseed.md) and Ansible
+- [Speedy kvm creation](../../proxmox/kvm/kvm-automated.md) with [Debian 10 preseed](debian/preseed/debian-10-preseed.md) and Ansible
 
 ------------------------------------------------------------------------
 

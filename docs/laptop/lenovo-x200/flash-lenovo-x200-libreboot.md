@@ -142,8 +142,7 @@ From your main computer:
 
 {: .important }
 > *You need to verify what size flash chip your X200
-> has. That will be done below at the [Checking
-> Communication](flash-lenovo-x200-libreboot.md#checking-communication)
+> has. That will be done below at the [Checking Communication](flash-lenovo-x200-libreboot.md#checking-communication)
 > section. If you're not sure, come back to this section once you know
 > what rom to download.*
 
@@ -234,9 +233,7 @@ are a few ways to get it.
   00001000: XXXX XXXX XXXX ...'PH
   ```
 
-  - If you need to use the factory.rom method, wait until you [dump the
-    factory
-    rom](flash-lenovo-x200-libreboot.md#backup-factory-rom)
+  - If you need to use the factory.rom method, wait until you [dump the factory rom](flash-lenovo-x200-libreboot.md#backup-factory-rom)
     to get the mac address, then come back and finish these steps.
 
 ------------------------------------------------------------------------
@@ -440,8 +437,7 @@ with the chip.
 
 You can see that it found the Macronix flash chip and that it's 8192kB.
 That lets us know that we need to use the 8Mb rom from the Libreboot
-mirror. If you need to, go back to [Prepare the
-Files](flash-lenovo-x200-libreboot.md#prepare-the-files)
+mirror. If you need to, go back to [Prepare the Files](flash-lenovo-x200-libreboot.md#prepare-the-files)
 and download the proper rom and follow the steps up to disassembling the
 X200.
 
@@ -504,9 +500,7 @@ this gives you an idea on what to expect time-wise.
 
 <!-- -->
 
-- Now is the time to get the mac address if you needed to for [Prepare
-  the
-  ROM](flash-lenovo-x200-libreboot.md#prepare-the-rom)
+- Now is the time to get the mac address if you needed to for [Prepare the ROM](flash-lenovo-x200-libreboot.md#prepare-the-rom)
   steps above.
 
 ------------------------------------------------------------------------

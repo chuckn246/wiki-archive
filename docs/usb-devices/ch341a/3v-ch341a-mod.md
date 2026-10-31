@@ -11,8 +11,7 @@
 
 
 After realizing that my Black CH341a was not working as intended while
-[flashing my x230 with
-Coreboot](../../laptop/lenovo-x230/flash-lenovo-x230-coreboot.md), (it was
+[flashing my x230 with Coreboot](../../laptop/lenovo-x230/flash-lenovo-x230-coreboot.md), (it was
 sending 5V to the signal outputs instead of 3.3V) I decided to attempt
 the
 [fix](https://www.eevblog.com/forum/repair/ch341a-serial-memory-programmer-power-supply-fix/msg1323775/#msg1323775)

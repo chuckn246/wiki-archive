@@ -1,7 +1,6 @@
 # Speedy KVM Creation
 
-I created a special [Debian 10
-preseed](../../linux/distribution/debian/preseed/debian-10-preseed.md) iso just
+I created a special [Debian 10 preseed](../../linux/distribution/debian/preseed/debian-10-preseed.md) iso just
 for my Proxmox kvm machines. I can go from zero to ready to rock in
 under 10 minutes!
 
@@ -14,8 +13,7 @@ sets vim as my default editor and copies my ssh public key to my
 authorized_keys file so I can run the Ansible playbook right after
 install.
 
-- I created the preseed file then added it to the ISO using my [Zero
-  Interaction](../../linux/distribution/debian/preseed/debian-10-preseed.md#zero-interaction)
+- I created the preseed file then added it to the ISO using my [Zero Interaction](../../linux/distribution/debian/preseed/debian-10-preseed.md#zero-interaction)
   method.
 - <https://gitlab.com/preseed/preseed-kvm/-/blob/da3402a1f9331fd23816703f62057091b7a36045/preseed.cfg>
 

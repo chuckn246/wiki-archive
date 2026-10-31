@@ -45,8 +45,7 @@ for your virtual terminal (tty).
 
 \
 
-- [Applying a VT
-  Colorscheme](../virtual_terminal_color.md#applying-a-vt-colorscheme-at-boot)
+- [Applying a VT Colorscheme](../virtual_terminal_color.md#applying-a-vt-colorscheme-at-boot)
 
 ------------------------------------------------------------------------
 

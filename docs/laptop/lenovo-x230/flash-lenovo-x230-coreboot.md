@@ -14,8 +14,7 @@
 
 I flashed my Lenovo x230 with Coreboot and documented how I did it.
 
-This procedure has a good amount more steps than the [Libreboot
-X200](../lenovo-x200/flash-lenovo-x200-libreboot.md) Flash. Mainly it
+This procedure has a good amount more steps than the [Libreboot X200](../lenovo-x200/flash-lenovo-x200-libreboot.md) Flash. Mainly it
 is due to having to build and configure Coreboot & friends.
 
 I urge you to check the sites I list below and cross-reference them with
@@ -61,8 +60,7 @@ proceeding then once you start, go slowly!
 
 First, we need to gather the supplies that we need to perform the flash.
 This time, we will be using a CH341a instead of the BeagleBone Black
-that I used on the [Libreboot
-X200](../lenovo-x200/flash-lenovo-x200-libreboot.md) Flash.
+that I used on the [Libreboot X200](../lenovo-x200/flash-lenovo-x200-libreboot.md) Flash.
 
 ![Gather
 supplies](../../media/laptop/lenovo-x230/coreboot/x230-flash-supplies.jpg)
@@ -189,8 +187,7 @@ film](../../media/laptop/lenovo-x230/coreboot/x230-tape-film.jpg)
 > If yours measures **5V** to the other pins there are modifications you
 > can do to fix the issue or flash at your own risk.
 >
-> I modified my programmer to provide the 3.3V, [SEE POST
-> HERE](../../usb-devices/ch341a/3v-ch341a-mod.md)
+> I modified my programmer to provide the 3.3V, [SEE POST HERE](../../usb-devices/ch341a/3v-ch341a-mod.md)
 
 
 To be on the safe side, I always check the voltage to make verify that I
@@ -229,8 +226,7 @@ to each of the other pins we will be using.
 
 
 {: .tip }
-> I modified the ch341a to provide the 3.3V, [SEE POST
-> HERE](../../usb-devices/ch341a/3v-ch341a-mod.md)
+> I modified the ch341a to provide the 3.3V, [SEE POST HERE](../../usb-devices/ch341a/3v-ch341a-mod.md)
 
 
 ------------------------------------------------------------------------

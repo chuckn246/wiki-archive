@@ -151,32 +151,25 @@ to rgb quickly. Then I created the files using those rgb values.
 
 #### Default
 
-- [Default VT
-  Colorscheme](colorscheme/default.md#default-vt-colorscheme)
+- [Default VT Colorscheme](colorscheme/default.md#default-vt-colorscheme)
 
 #### Dracula
 
-- [Dracula VT
-  Colorscheme](colorscheme/dracula.md#dracula-vt-colorscheme)
+- [Dracula VT Colorscheme](colorscheme/dracula.md#dracula-vt-colorscheme)
 
 #### Gruvbox
 
-- [Gruvbox Dark VT
-  Colorscheme](colorscheme/gruvbox_dark.md#gruvbox-dark-vt-colorscheme)
-- [Gruvbox Light VT
-  Colorscheme](colorscheme/gruvbox_light.md#gruvbox-light-vt-colorscheme)
+- [Gruvbox Dark VT Colorscheme](colorscheme/gruvbox_dark.md#gruvbox-dark-vt-colorscheme)
+- [Gruvbox Light VT Colorscheme](colorscheme/gruvbox_light.md#gruvbox-light-vt-colorscheme)
 
 #### Nord
 
-- [Nord VT
-  Colorscheme](colorscheme/nord.md#nord-vt-colorscheme)
+- [Nord VT Colorscheme](colorscheme/nord.md#nord-vt-colorscheme)
 
 #### Solarized
 
-- [Solarized Dark
-  Colorscheme](colorscheme/solarized_dark.md#solarized-dark-vt-colorscheme)
-- [Solarized Light
-  Colorscheme](colorscheme/solarized_light.md#solarized-light-vt-colorscheme)
+- [Solarized Dark Colorscheme](colorscheme/solarized_dark.md#solarized-dark-vt-colorscheme)
+- [Solarized Light Colorscheme](colorscheme/solarized_light.md#solarized-light-vt-colorscheme)
 
 ------------------------------------------------------------------------
 
