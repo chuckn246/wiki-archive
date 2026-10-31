@@ -1,7 +1,7 @@
 # Flashing my Lenovo x200 with Libreboot
 
 
-> [!NOTE]
+{: .note-title }
 > This guide is fairly old (2020/2021) and I haven't
 > had time to update it with any changes that Libreboot may require.
 >
@@ -22,7 +22,7 @@ proceeding then once you start, go slowly!
 ------------------------------------------------------------------------
 
 
-> [!CAUTION]
+{: .caution-title }
 > ##### Disclaimer
 >
 > *While this process worked for me, you may not have the same results.
@@ -70,7 +70,7 @@ After the hostname, it shows the current directory. Eg:
 ## Gather Supplies
 
 
-> [!IMPORTANT]
+{: .important-title }
 > ##### Attention
 >
 > The BeagleBone Black used in this guide is old.\
@@ -107,7 +107,7 @@ Supplies](../../media/laptop/lenovo-x200/libreboot/x200-supplies.jpg)
 ## Prepare the Files
 
 
-> [!NOTE]
+{: .note-title }
 > These instructions are currently for **Libreboot
 > 20160907** which has a different gpg signing key than **Libreboot
 > 20210522** and newer!
@@ -140,7 +140,7 @@ From your main computer:
   - **libreboot_r20160907_grub_x200_8mb.tar.xz**
 
 
-> [!IMPORTANT]
+{: .important-title }
 > *You need to verify what size flash chip your X200
 > has. That will be done below at the [Checking
 > Communication](flash-lenovo-x200-libreboot.md#checking-communication)

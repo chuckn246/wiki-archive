@@ -8,7 +8,7 @@ It is possible to use [KeePassXC](https://keepassxc.org/) as the system
 keyring.
 
 
-> [!NOTE]
+{: .note-title }
 > The following information requires at least
 > KeePassXC 2.5.0 installed.
 

@@ -164,7 +164,8 @@ The ownertrust reflects the level of trust, which you put into how
 thoroughly you think, the key owner acts when signing other keys.
 Trust-levels are not set for keys but for the certain key owners.
 
-> [!IMPORTANT] Adjusting the ownertrust will not affect the validity
+{: .important-title }
+> Adjusting the ownertrust will not affect the validity
 > of the key you are setting it for. It only concerns third party keys,
 > which then may be signed by your friends. Depending on the ownertrust
 > you have set for your friends keys, their signatures on keys you have in

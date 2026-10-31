@@ -15,7 +15,7 @@ separately.
 ## Applying a VT Colorscheme at boot
 
 
-> [!NOTE]
+{: .note-title }
 > The following instructions were created on
 > Debian 10 (buster).
 >
@@ -73,7 +73,7 @@ sudo chmod +x /etc/initramfs-tools/hooks/setvtrgb_hook
 ### Choose a colorscheme
 
 
-> [!TIP]
+{: .tip-title }
 > Test the colorscheme by running the script then clearing
 > the terminal. This way you can see which one you like ahead of time.
 

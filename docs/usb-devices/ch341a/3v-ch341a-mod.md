@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 
 
-> [!WARNING]
+{: .warning-title }
 > It is NOT recommended to use the CH341a for flashing!\
 > The following page for recommendations and an explanation of why the
 > CH341a is not advised:\
@@ -37,7 +37,7 @@ wire and a good amount of patience.
 ------------------------------------------------------------------------
 
 
-> [!NOTE]
+{: .note-title }
 > ##### Disclaimer
 >
 > *I am an amateur electronics hobbyist. I like to think that I am fairly

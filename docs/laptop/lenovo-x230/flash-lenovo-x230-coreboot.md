@@ -1,7 +1,7 @@
 # Flashing my Lenovo x230 with Coreboot
 
 
-> [!NOTE]
+{: .note-title }
 > This guide is fairly old (2020/2021) and I haven't
 > had time to update it with any changes that Coreboot may require.
 >
@@ -28,7 +28,7 @@ Main bit of advice here is to read over the directions once before
 proceeding then once you start, go slowly!
 
 
-> [!CAUTION]
+{: .caution-title }
 > ##### Disclaimer
 >
 > *While this process worked for me, you may not have the same results.
@@ -52,7 +52,7 @@ proceeding then once you start, go slowly!
 ## Gather Supplies
 
 
-> [!WARNING]
+{: .warning-title }
 > It is NOT recommended to use the CH341a!\
 > The following page for recommendations and an explanation of why the
 > CH341a is not advised:\
@@ -177,7 +177,7 @@ film](../../media/laptop/lenovo-x230/coreboot/x230-tape-film.jpg)
 ## Check Voltage
 
 
-> [!IMPORTANT]
+{: .important-title }
 > Some Black CH341a programmers may be
 > providing **5V** to from GND to the other pins.
 >
@@ -228,7 +228,7 @@ to each of the other pins we will be using.
 ![ch341a mosi 3.3v](../../media/usb-device/ch341a/3v-mod/ch341a-mosi-3.3v.jpg)
 
 
-> [!TIP]
+{: .tip-title }
 > I modified the ch341a to provide the 3.3V, [SEE POST
 > HERE](../../usb-devices/ch341a/3v-ch341a-mod.md)
 
@@ -283,7 +283,7 @@ Let's verify that we can communicate with the chips before performing
 any more operations on the X230.
 
 
-> [!NOTE]
+{: .note-title }
 > You don't have to check both chips here; once
 > you receive verification that communication was successful, you can
 > proceed to back up that chip. Then move to the other chip, verify
