@@ -27,9 +27,6 @@ defaults:
       nav_exclude: true
 
 callouts:
-  archive:
-    title: Archived Documentation
-    color: yellow
   caution:
     title: Caution
     color: red
