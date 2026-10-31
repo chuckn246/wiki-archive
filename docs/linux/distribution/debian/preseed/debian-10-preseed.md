@@ -159,7 +159,7 @@ You can also browse the default recipes located inside the installer.
 - You can use the `more` command to read the contents.
 
 
-{: .tip-title }
+{: .tip }
 > Try performing the install over ssh which will allow
 > you to select and copy the text to a file to your local machine
 
@@ -281,7 +281,7 @@ I used the following packages to complete these steps:
 \
 
 
-{: .note-title }
+{: .note }
 > #### Script it!
 >
 > After doing that a couple of times when making changes, it got a little
@@ -321,7 +321,7 @@ Install, follow the [zero interaction](#zero-interaction) steps!
     - `auto url=xxx.xxx.xxx.xx:8000/preseed.cfg`
 
 
-{: .note-title }
+{: .note }
 > Make sure your firewall ports are open to allow
 > access to port 8000 (or whatever port you have the http.server set to).
 > You should see the GET request on the computer hosting the file if it
@@ -341,7 +341,7 @@ and proceed with the install.
 #### Steps
 
 
-{: .note-title }
+{: .note }
 > This should be done before generating the md5sums
 > in the [above steps](#add-it-to-the-iso) of adding the preseed to the
 > iso.

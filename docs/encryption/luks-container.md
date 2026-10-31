@@ -2,7 +2,7 @@
 
 ------------------------------------------------------------------------
 
-{: .tip-title }
+{: .tip }
 > With cryptsetup 2.1.0, the LUKS header takes up just under
 > 16MiB, so the partition size must be 16MiB + the size of the data you
 > want to store in it.

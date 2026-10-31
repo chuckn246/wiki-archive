@@ -7,6 +7,7 @@ nav_exclude: false
 
 # Chuck Nemeth's Legacy Technical Wiki
 
+{: .note-title }
 > **Archived Documentation**
 >
 > This wiki is no longer actively maintained. Some information may be outdated, but the content is preserved for historical reference and for anyone who still finds it useful.

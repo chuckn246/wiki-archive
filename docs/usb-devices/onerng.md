@@ -380,7 +380,7 @@ You can check the amount of entropy available by reading the file
 `/proc/sys/kernel/random/entropy_avail`.
 
 
-{: .note-title }
+{: .note }
 > Here's a oneliner I wrote to monitor it from
 > another terminal while I ran the above tests:
 >

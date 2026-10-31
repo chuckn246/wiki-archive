@@ -3,7 +3,7 @@
 ------------------------------------------------------------------------
 
 
-{: .note-title }
+{: .note }
 > This works great on my Debian Bullseye /
 > i3wm system. I don't see why this wouldn't work on other distros / DEs
 > but YMMV.
@@ -175,7 +175,7 @@ SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/<name>-agent.socket" ssh-add -L
 SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/<name>-agent.socket" ssh-add -D
 ```
 
-{: .note-title }
+{: .note }
 > Configuring
 > **IdentityAgent** and **AddKeysToAgent** in `~/.ssh/config` will
 > automatically add the key to the correct agent when you use it.
@@ -304,7 +304,7 @@ SSH_AUTH_SOCK="XDG_RUNTIME_DIR/work-agent.socket" ssh-add -L
 ```
 
 
-{: .note-title }
+{: .note }
 > Configuring
 > **IdentityAgent** and **AddKeysToAgent** in `~/.ssh/config` will add the
 > key to the correct agent when you first use it.
@@ -350,7 +350,7 @@ Environment=SSH_AUTH_SOCK=%t/ssh/ssh-agent.socket
 ```
 
 
-{: .note-title }
+{: .note }
 > For multi-user systems,
 > make sure to add/configure files in `/etc/skel` so the agent
 > dependencies are set up during user creation.
