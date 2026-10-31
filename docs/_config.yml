@@ -24,5 +24,6 @@ defaults:
       type: pages
     values:
       layout: default
+      nav_exclude: true
 
 # vim: ft=yaml ts=2 sts=-1 sw=2 et
