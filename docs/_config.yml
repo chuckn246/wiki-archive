@@ -4,7 +4,7 @@ description: Archived technical notes and documentation
 
 # Temporary GitHub Pages URL
 url: "https://legacy.chucknemeth.com"
-baseurl: "/wiki-archive"
+baseurl: ""
 
 # Documentation theme
 remote_theme: just-the-docs/just-the-docs@v0.12.0
